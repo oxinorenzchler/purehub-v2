@@ -1,0 +1,104 @@
+$(document).ready(function(){
+
+	$.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
+	});
+
+	//Submit post form
+	$('#post-form').on('submit',function(e){
+		e.preventDefault();
+		$.ajax({
+			type: 'POST',
+			url: '/add_post',
+			data: new FormData(this),
+			contentType: false,
+			cache: false,
+			processData: false,
+			beforeSend: function(){
+				$('#post-content-input').attr('disabled','disabled');
+				$('#file-input').attr('disabled','disabled');
+				$('#post-submit-btn').attr('disabled','disabled');
+				$('#post-form').css('opacity','0.5');
+			},
+			error:function(data){
+				var response = data.responseJSON.message;
+				$('#post-content-input').removeAttr('disabled','disabled');
+				$('#file-input').removeAttr('disabled','disabled');
+				$('#post-submit-btn').removeAttr('disabled','disabled');
+				$('#post-form').css('opacity','1');
+				$('#post-add-msg').text(response);
+			}
+		}).done(function(data){
+
+			console.log(data);
+
+			$('#post-content-input').removeAttr('disabled','disabled');
+			$('#file-input').removeAttr('disabled','disabled');
+			$('#post-submit-btn').removeAttr('disabled','disabled');
+			$('#post-form').css('opacity','1');
+			$('#post-add-msg').text('Success');
+			$('#post-form')[0].reset();			
+
+			if(data.content != null){
+				content = '<p class="content-'+data.post_id+'">'+ data.content +'</p>'
+			}else{
+				content = '';
+			}
+
+			if(data.image != null){
+				image = '<img src="'+data.image+'" height="50" width="50">';
+			}else{
+				image = '';
+			}
+
+			var post = '<div class="post-item-'+data.post_id+' card mb-5">'+ data.user +' '+ content + ' '+ image +'  ' + data.created_at +'</div>';
+			
+			$(post).hide().prependTo('#posts-section').fadeIn('slow');
+
+
+
+
+
+		})
+	})
+
+	//file type validation
+	$("#file-input").change(function() {
+		var file = this.files[0];
+		var imagefile = file.type;
+		var match= ["image/jpeg","image/png","image/jpg", "image/gif"];
+		if(!((imagefile==match[0]) || (imagefile==match[1]) || (imagefile==match[2] || (imagefile==match[3])))){
+			$('#post-submit-btn').attr('disabled','disabled');
+			$('#post-add-msg').text('The image must be JPEG,JPEG,PNG or GIF format. Max size 2MB.');
+			$("#file-input").val('');
+		}else{
+			$('#post-submit-btn').removeAttr('disabled','disabled');
+			$('#post-add-msg').html('');
+		}
+	});
+
+	//delete post
+	$('#deletePostForm').on('submit',function(e){
+		e.preventDefault();
+		var id = $('#deletePostID').val();
+		$.ajax({
+			url:'/delete_post',
+			method:'DELETE',
+			data:{'id':id}
+		}).done(function(data){
+			if(data == 'ok'){
+				$('#deletePostModal').modal('hide');
+				$('.post-item-'+id).fadeOut('slow').remove();
+			}
+		});
+	});
+});// end doc ready
+
+//toggle delete post modal
+function toggleDeletePostModal(id){
+	// console.log(id);
+	$('#deletePostID').val(id);
+	$('#deletePostModal').modal('show');
+}

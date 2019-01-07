@@ -11,10 +11,25 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
+
+//Index
+Route::view('/','index');
+//Home
+Route::view('/home','auth.home');
+
+###############
+# AJAX Routes #
+###############
+
+//Add post
+Route::post('/add_post','PostController@store')->name('add.post');
+
+//Delete post
+Route::delete('/delete_post', 'PostController@delete')->name('delete.post');
