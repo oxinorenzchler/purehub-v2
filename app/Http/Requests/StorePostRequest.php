@@ -24,6 +24,7 @@ class StorePostRequest extends FormRequest
     public function rules()
     {
         return [
+            'postid'=>'nullable',
             'content' => 'nullable|string',
             'file' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
         ];

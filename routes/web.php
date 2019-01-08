@@ -29,7 +29,10 @@ Route::view('/home','auth.home');
 ###############
 
 //Add post
-Route::post('/add_post','PostController@store')->name('add.post');
+Route::post('/add-post','PostController@store')->name('add.post');
+
+//Edit post
+Route::put('/edit-post','PostController@update')->name('edit.post');
 
 //Delete post
-Route::delete('/delete_post', 'PostController@delete')->name('delete.post');
+Route::delete('/delete-post', 'PostController@delete')->name('delete.post');

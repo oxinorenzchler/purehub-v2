@@ -19,7 +19,7 @@
 				<div class="clearfix"></div>
 			</div>
 		</div>
-		<small id="post-add-msg" class="form-text text-muted"></small>
+		<small class="post-msg" class="form-text text-muted"></small>
 	</form>
 <script type="text/javascript" src="{{ asset('js/post.js') }}"></script>
 </div>
